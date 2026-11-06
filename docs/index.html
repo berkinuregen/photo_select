@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Atölye fotoğraf seçim uygulaması hakkında bilgi.">
+  <title>Atölye · Fotoğraf Seçimi</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #11100f; color: #eeeae5; font-family: system-ui, sans-serif; }
+    .wrap { max-width: 1050px; margin: auto; padding: 0 24px; }
+    header { border-bottom: 1px solid #38322e; }
+    .top { min-height: 78px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .brand { font-size: 13px; font-weight: 700; letter-spacing: .2em; }
+    .brand span { color: #a59b90; }
+    a { color: inherit; }
+    .top a { font-size: 13px; color: #c9c0b7; text-decoration: none; }
+    main { padding: 95px 0 90px; }
+    .eyebrow { color: #b7a99b; font-size: 11px; font-weight: 700; letter-spacing: .2em; }
+    h1 { margin: 20px 0; max-width: 780px; font: 400 clamp(46px, 9vw, 88px)/1.04 Georgia, serif; letter-spacing: -.04em; }
+    .intro { max-width: 590px; font-size: 17px; line-height: 1.8; color: #bdb4aa; }
+    .action { display: inline-block; margin-top: 20px; padding: 15px 20px; background: #eeeae5; color: #171411; text-decoration: none; font-size: 14px; font-weight: 700; }
+    .notice { margin-top: 80px; padding: 24px; border: 1px solid #5c5044; background: #1d1916; line-height: 1.7; }
+    .notice strong { display: block; margin-bottom: 6px; }
+    .notice p { margin: 0; color: #c9c0b7; font-size: 14px; }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 35px; margin-top: 70px; }
+    .features article { border-top: 1px solid #5c5044; padding-top: 20px; }
+    .features h2 { font: 400 24px Georgia, serif; }
+    .features p { color: #bdb4aa; font-size: 14px; line-height: 1.7; }
+    footer { border-top: 1px solid #38322e; padding: 24px 0; color: #a59b90; font-size: 12px; }
+    @media (max-width: 650px) { main { padding: 65px 0; } .features { grid-template-columns: 1fr; gap: 10px; } .notice { margin-top: 55px; } }
+  </style>
+</head>
+<body>
+  <header><div class="wrap top"><div class="brand">ATÖLYE <span>/ PROOFING</span></div><a href="https://github.com/berkinuregen/photo_select">GitHub ↗</a></div></header>
+  <main class="wrap">
+    <p class="eyebrow">FOTOĞRAF SEÇİMİNE YENİ BİR BAKIŞ</p>
+    <h1>Hikâyenizin en güzel kareleri.</h1>
+    <p class="intro">Fotoğrafçılar ve müşterileri için sade, özel ve mobil uyumlu bir fotoğraf seçim deneyimi.</p>
+    <a class="action" href="https://github.com/berkinuregen/photo_select">Projeyi GitHub'da incele →</a>
+    <div class="notice" role="note">
+      <strong>Bu sayfa yalnızca tanıtım amaçlıdır.</strong>
+      <p>GitHub Pages uygulamanın Python sunucusunu çalıştırmaz. Bu sayfada yönetici girişi, fotoğraf yükleme ve müşteri galerileri kullanılamaz. Uygulama ayrıca bir sunucuda kurulmalıdır.</p>
+    </div>
+    <section class="features" aria-label="Uygulama özellikleri">
+      <article><p class="eyebrow">01 / PAYLAŞIM</p><h2>Size özel galeriler</h2><p>Her çekim için özel bağlantıyla fotoğrafları müşterilerinizle paylaşın.</p></article>
+      <article><p class="eyebrow">02 / SEÇİM</p><h2>Kolay seçim</h2><p>Müşterileriniz favorilerini seçsin ve her kareye not eklesin.</p></article>
+      <article><p class="eyebrow">03 / TESLİM</p><h2>Net sonuçlar</h2><p>Seçilen fotoğrafların dosya adlarına ve müşteri notlarına ulaşın.</p></article>
+    </section>
+  </main>
+  <footer><div class="wrap">ATÖLYE / PROOFING · Statik tanıtım sayfası</div></footer>
+</body>
+</html>
