@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Yönetici Girişi · Atölye{% endblock %}
+{% block content %}
+<main class="min-h-screen flex items-center justify-center px-6">
+  <section class="w-full max-w-sm">
+    <p class="eyebrow">ATÖLYE / YÖNETİM</p>
+    <h1 class="display mt-5">Hoş geldiniz.</h1>
+    <p class="muted mt-3">Galerilerinizi yönetmek için giriş yapın.</p>
+    <form id="login-form" class="mt-10 space-y-5">
+      <label class="block text-sm" for="password">Yönetici parolası</label>
+      <input id="password" class="input" type="password" required autocomplete="current-password">
+      <button class="button button-light w-full" type="submit">Giriş yap <span aria-hidden="true">→</span></button>
+    </form>
+  </section>
+</main>
+{% endblock %}
+{% block scripts %}<script src="/static/login.js" defer></script>{% endblock %}
