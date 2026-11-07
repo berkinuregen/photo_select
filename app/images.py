@@ -1,16 +1,36 @@
 import secrets
 import threading
 import warnings
+import logging
 from pathlib import Path
 
 from fastapi import HTTPException, UploadFile
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 from .config import UPLOAD_DIR
+from .database import connect
 
 MAX_FILE_BYTES = 30 * 1024 * 1024
 Image.MAX_IMAGE_PIXELS = 40_000_000
 _image_lock = threading.Lock()
+logger = logging.getLogger(__name__)
+
+
+def cleanup_pending_previews() -> int:
+    with connect() as db:
+        names = [row["preview_name"] for row in db.execute(
+            "SELECT preview_name FROM pending_preview_deletions"
+        )]
+    for name in names:
+        try:
+            (UPLOAD_DIR / name).unlink(missing_ok=True)
+        except OSError:
+            logger.exception("Could not remove queued preview %s", name)
+            continue
+        with connect() as db:
+            db.execute("DELETE FROM pending_preview_deletions WHERE preview_name = ?", (name,))
+    with connect() as db:
+        return db.execute("SELECT COUNT(*) FROM pending_preview_deletions").fetchone()[0]
 
 
 def make_preview(upload: UploadFile) -> tuple[str, str]:

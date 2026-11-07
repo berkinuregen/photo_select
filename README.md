@@ -50,6 +50,7 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
 4. Müşteri kalp düğmesiyle seçim yapar, isteğe bağlı notları düzenler ve alanın dışına çıkarak kaydeder. Sayaç ve sunucu üst sınırı denetler. En az bir fotoğraf seçildikten sonra onay verilebilir; gönderim seçimleri ve notları kilitler.
 5. Yönetici ekranındaki sonuçlar yaklaşık 10 saniyede bir yenilenir. Dosya adlarını kopyalayın veya metin alanından elle alın. Lightroom Classic Library Filter'da **Text → Filename → Contains** alanına virgülle ayrılmış listeyi yapıştırın; sonuçları kendi Lightroom sürümünüzde ve dosya adlarınızla doğrulayın. Notlar yönetici ekranında fotoğraf altında görünür.
 6. Galeri yayından kaldırıldığında bağlantı ve önizlemeler müşteriye kapanır. Gönderilmiş galeride fotoğraf ekleme/silme kapalıdır; tekrar açma özelliği yoktur.
+7. Yönetim panelindeki **Galeriyi sil** düğmesi onay sonrasında galeriyi, müşteri seçimlerini, notları ve WebP önizlemelerini kalıcı olarak siler; gönderilmiş galeriler de silinebilir. Temizlenemeyen önizlemeler için uyarı gösterilir ve uygulama yeniden başladığında temizlik tekrar denenir.
 
 ## 3. Linux VPS ve systemd
 

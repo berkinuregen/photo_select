@@ -10,7 +10,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from .config import COOKIE_SECURE, ROOT, SECRET_KEY, UPLOAD_DIR
 from .database import connect, init_db
-from .images import make_preview
+from .images import cleanup_pending_previews, make_preview
 from .security import check_origin, login, require_admin
 
 
@@ -18,6 +18,7 @@ from .security import check_origin, login, require_admin
 async def lifespan(_app: FastAPI):
     init_db()
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    cleanup_pending_previews()
     yield
 
 
@@ -139,17 +140,34 @@ def publish_gallery(gallery_id: int, body: PublishBody):
     return {"ok": True}
 
 
+@app.delete("/api/admin/galleries/{gallery_id}", dependencies=[Depends(check_origin), Depends(require_admin)])
+def delete_gallery(gallery_id: int):
+    with connect() as db:
+        db.execute("BEGIN IMMEDIATE")
+        get_admin_gallery(db, gallery_id)
+        db.execute("""
+            INSERT OR IGNORE INTO pending_preview_deletions (preview_name)
+            SELECT preview_name FROM photos WHERE gallery_id = ?
+        """, (gallery_id,))
+        db.execute("DELETE FROM galleries WHERE id = ?", (gallery_id,))
+    pending = cleanup_pending_previews()
+    return {"ok": True, "cleanup_pending": pending}
+
+
 @app.post("/api/admin/galleries/{gallery_id}/photos", dependencies=[Depends(check_origin), Depends(require_admin)])
 def upload_photo(gallery_id: int, file: UploadFile = File(...)):
     with connect() as db:
         gallery = get_admin_gallery(db, gallery_id)
         if gallery["submitted_at"]:
             raise HTTPException(409, "Gönderilmiş galeriye fotoğraf eklenemez.")
+        gallery_token = gallery["token"]
     filename, preview_name = make_preview(file)
     try:
         with connect() as db:
             db.execute("BEGIN IMMEDIATE")
             gallery = get_admin_gallery(db, gallery_id)
+            if gallery["token"] != gallery_token:
+                raise HTTPException(409, "Galeri artık mevcut değil.")
             if gallery["submitted_at"]:
                 raise HTTPException(409, "Gönderilmiş galeriye fotoğraf eklenemez.")
             db.execute("INSERT INTO photos (gallery_id, filename, preview_name) VALUES (?, ?, ?)",

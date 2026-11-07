@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Yönetim · Atölye{% endblock %}
 {% block content %}
-<header class="border-b border-stone-800">
+<header class="site-header">
   <div class="container flex items-center justify-between py-6">
-    <a class="brand" href="/admin">ATÖLYE <span class="text-stone-500">/ PROOFING</span></a>
-    <button id="logout" class="text-sm text-stone-400 hover:text-white">Çıkış yap</button>
+    <a class="brand" href="/admin"><span class="brand-mark">A</span> ATÖLYE <span class="brand-sub">/ STÜDYO</span></a>
+    <button id="logout" class="header-action">Çıkış yap <span aria-hidden="true">↗</span></button>
   </div>
 </header>
 <main class="container py-10 md:py-16">
-  <div class="flex flex-wrap justify-between items-end gap-6">
-    <div><p class="eyebrow">STÜDYO YÖNETİMİ</p><h1 class="display mt-3">Galerileriniz.</h1><p class="muted mt-3">Hikâyeleri paylaşın, seçimleri takip edin.</p></div>
-    <button id="new-toggle" class="button button-light">+ Yeni galeri</button>
+  <div class="dashboard-hero flex flex-wrap justify-between items-end gap-6">
+    <div><p class="eyebrow"><span class="accent-dot"></span> STÜDYO YÖNETİMİ</p><h1 class="display mt-3">Hikâyeleriniz,<br><em>bir arada.</em></h1><p class="muted mt-4">Galerilerinizi paylaşın, en özel kareleri birlikte seçin.</p></div>
+    <button id="new-toggle" class="button button-light"><span class="button-plus">+</span> Yeni galeri</button>
   </div>
   <form id="create-form" class="panel hidden mt-8 grid gap-4">
-    <h2 class="text-xl">Yeni galeri oluştur</h2>
+    <div><p class="eyebrow">YENİ BİR HİKÂYE</p><h2 class="panel-title mt-2">Galeri oluştur</h2></div>
     <label>Galeri adı<input name="title" class="input mt-2" maxlength="160" required placeholder="Ahmet & Ayşe Düğün Çekimi"></label>
     <label>Açıklama<textarea name="description" class="input mt-2" maxlength="2000" rows="2" placeholder="Müşterinize kısa bir not"></textarea></label>
     <label>Seçim sınırı<input name="selection_limit" class="input mt-2" type="number" min="1" max="10000" value="30" required></label>
     <button class="button button-light justify-self-start">Galeri oluştur</button>
   </form>
   <div class="grid lg:grid-cols-[minmax(240px,340px)_1fr] gap-8 mt-12">
-    <section><div class="section-heading">GALERİLER <span id="gallery-count"></span></div><div id="gallery-list" class="space-y-2 mt-4"></div></section>
-    <section id="detail"><div class="empty">Detayları görmek için bir galeri seçin.</div></section>
+    <section><div class="section-heading">GALERİLERİNİZ <span id="gallery-count"></span></div><div id="gallery-list" class="space-y-2 mt-4"></div></section>
+    <section id="detail"><div class="empty detail-empty"><span class="empty-symbol">✳</span><h2>Bir galeri seçin</h2><p>Fotoğrafları ve müşteri seçimlerini burada görüntüleyin.</p></div></section>
   </div>
 </main>
 {% endblock %}

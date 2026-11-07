@@ -24,7 +24,7 @@ async function refreshList() {
   const galleries = await api("/api/admin/galleries");
   document.getElementById("gallery-count").textContent = `(${galleries.length})`;
   list.innerHTML = galleries.length ? galleries.map(g => `<button class="gallery-item ${g.id === currentId ? "active" : ""}" data-id="${g.id}">
-    <span class="block font-medium">${escapeHtml(g.title)}</span>
+    <span class="gallery-item-title">${escapeHtml(g.title)} <span aria-hidden="true">↗</span></span>
     <span class="block text-xs text-stone-400 mt-2">${g.photo_count} fotoğraf · ${g.selected_count}/${g.selection_limit} seçildi</span>
     <span class="block text-xs text-stone-500 mt-1">${g.submitted_at ? "Seçim iletildi" : g.published ? "Yayında" : "Taslak"}</span></button>`).join("") : '<p class="muted">Henüz galeri yok.</p>';
   list.querySelectorAll("[data-id]").forEach(button => button.onclick = async () => {
@@ -39,9 +39,9 @@ async function refreshDetail() {
   if (currentId !== requestedId) return;
   const selected = photos.filter(p => p.selected);
   const url = `${location.origin}/galeri/${g.token}`;
-  detail.innerHTML = `<div class="panel">
-    <div class="flex flex-wrap justify-between gap-4"><div><p class="eyebrow">${g.submitted_at ? "SEÇİM İLETİLDİ" : g.published ? "YAYINDA" : "TASLAK"}</p><h2 class="text-2xl mt-2">${escapeHtml(g.title)}</h2><p class="muted mt-2">${escapeHtml(g.description)}</p></div>
-    <button id="publish" class="button self-start">${g.published ? "Yayından kaldır" : "Yayınla"}</button></div>
+  detail.innerHTML = `<div class="panel detail-panel">
+    <div class="flex flex-wrap justify-between gap-4"><div><p class="eyebrow"><span class="accent-dot"></span> ${g.submitted_at ? "SEÇİM İLETİLDİ" : g.published ? "YAYINDA" : "TASLAK"}</p><h2 class="panel-title mt-2">${escapeHtml(g.title)}</h2><p class="muted mt-2">${escapeHtml(g.description)}</p></div>
+    <div class="flex flex-wrap gap-2 self-start"><button id="publish" class="button">${g.published ? "Yayından kaldır" : "Yayınla"}</button><button id="delete-gallery" class="button button-danger">Galeriyi sil</button></div></div>
     <div class="mt-6"><label class="text-xs text-stone-400" for="gallery-url">Özel galeri bağlantısı</label><div class="flex gap-2 mt-2"><input id="gallery-url" class="input" value="${escapeHtml(url)}" readonly><button id="copy-link" class="button">Kopyala</button></div></div>
     <p class="text-xs text-stone-500 mt-2">Bağlantıya sahip olan herkes galeriye erişebilir. Yalnızca müşterinizle paylaşın.</p>
     <div id="drop-zone" class="empty mt-6 ${g.submitted_at ? "hidden" : ""}"><p>JPG / PNG fotoğrafları buraya sürükleyin</p><p class="text-xs mt-2">Her dosya en fazla 30 MB · Tek tek yüklenir</p><label class="button mt-4">Dosya seç<input id="file-input" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple class="hidden"></label><p id="upload-status" class="text-xs mt-3"></p></div>
@@ -56,6 +56,20 @@ async function refreshDetail() {
   detail.querySelector("#publish").onclick = async () => {
     try { await api(`/api/admin/galleries/${g.id}`, { method: "PATCH", body: JSON.stringify({ published: !g.published }) }); await refresh(); }
     catch (error) { toast(error.message); }
+  };
+  detail.querySelector("#delete-gallery").onclick = async event => {
+    if (uploading) { toast("Yükleme tamamlandıktan sonra galeriyi silin."); return; }
+    if (!confirm(`“${g.title}” galerisi, tüm fotoğrafları, seçimleri ve notları kalıcı olarak silinecek. Bu işlem geri alınamaz. Devam edilsin mi?`)) return;
+    event.currentTarget.disabled = true;
+    try {
+      const result = await api(`/api/admin/galleries/${g.id}`, { method: "DELETE" });
+      if (currentId === g.id) {
+        currentId = null;
+        detail.innerHTML = '<div class="empty detail-empty"><span class="empty-symbol">✳</span><h2>Bir galeri seçin</h2><p>Fotoğrafları ve müşteri seçimlerini burada görüntüleyin.</p></div>';
+      }
+      await refreshList();
+      toast(result.cleanup_pending ? "Galeri silindi; bazı önizlemeler temizlenemedi. Sunucu kayıtlarını kontrol edin; temizlik yeniden başlatmada tekrar denenecek." : "Galeri ve fotoğrafları silindi.");
+    } catch (error) { toast(error.message); event.currentTarget.disabled = false; }
   };
   detail.querySelectorAll(".delete-photo").forEach(button => button.onclick = async () => {
     if (!confirm("Bu fotoğraf silinsin mi?")) return;

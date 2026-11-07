@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from unittest.mock import patch
 
 from PIL import Image
 
@@ -17,6 +18,9 @@ os.environ["COOKIE_SECURE"] = "false"
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.database import connect
+from app.images import cleanup_pending_previews
+from app.images import make_preview
 
 HEADERS = {"X-Requested-With": "XMLHttpRequest"}
 
@@ -138,6 +142,61 @@ class ProofingTests(unittest.TestCase):
                                             headers=HEADERS).status_code, 200)
         self.assertEqual(self.client.get(f"/api/admin/galleries/{gid}/photos/{photo['id']}/preview").status_code, 404)
         self.assertEqual(self.client.get(f"/api/admin/galleries/{gid}").json()["photos"], [])
+
+    def test_delete_submitted_gallery_and_previews(self):
+        gallery = self.create_gallery()
+        other = self.create_gallery()
+        self.upload(gallery)
+        self.upload(other, "other.jpg")
+        self.publish(gallery)
+        base = f"/api/galeri/{gallery['token']}"
+        photo = self.client.get(base).json()["photos"][0]
+        self.client.put(f"{base}/photos/{photo['id']}", headers=HEADERS,
+                        json={"selected": True, "note": "Test"})
+        self.client.post(f"{base}/submit", headers=HEADERS)
+        with connect() as db:
+            preview = db.execute("SELECT preview_name FROM photos WHERE id = ?", (photo["id"],)).fetchone()[0]
+        preview_path = Path(os.environ["UPLOAD_DIR"]) / preview
+        with TestClient(app) as anonymous:
+            self.assertEqual(anonymous.delete(f"/api/admin/galleries/{gallery['id']}", headers=HEADERS).status_code, 401)
+        self.assertEqual(self.client.delete(f"/api/admin/galleries/{gallery['id']}").status_code, 403)
+        result = self.client.delete(f"/api/admin/galleries/{gallery['id']}", headers=HEADERS)
+        self.assertEqual(result.json(), {"ok": True, "cleanup_pending": 0})
+        self.assertFalse(preview_path.exists())
+        self.assertEqual(self.client.get(base).status_code, 404)
+        self.assertEqual(self.client.get(f"{base}/photos/{photo['id']}/preview").status_code, 404)
+        self.assertEqual(self.client.get(f"/api/admin/galleries/{gallery['id']}").status_code, 404)
+        self.assertEqual(self.client.delete(f"/api/admin/galleries/{gallery['id']}", headers=HEADERS).status_code, 404)
+        self.assertEqual(len(self.client.get(f"/api/admin/galleries/{other['id']}").json()["photos"]), 1)
+
+    def test_preview_cleanup_failure_is_reported_and_retried(self):
+        gallery = self.create_gallery()
+        self.upload(gallery)
+        with patch("pathlib.Path.unlink", side_effect=PermissionError("test")):
+            with self.assertLogs("app.images", level="ERROR"):
+                result = self.client.delete(f"/api/admin/galleries/{gallery['id']}", headers=HEADERS)
+        self.assertEqual(result.json()["cleanup_pending"], 1)
+        with connect() as db:
+            name = db.execute("SELECT preview_name FROM pending_preview_deletions").fetchone()[0]
+        preview = Path(os.environ["UPLOAD_DIR"]) / name
+        self.assertTrue(preview.exists())
+        self.assertEqual(cleanup_pending_previews(), 0)
+        self.assertFalse(preview.exists())
+
+    def test_upload_does_not_enter_recreated_gallery(self):
+        gallery = self.create_gallery()
+        replacement = {}
+
+        def delete_during_processing(file):
+            preview = make_preview(file)
+            self.client.delete(f"/api/admin/galleries/{gallery['id']}", headers=HEADERS)
+            replacement.update(self.create_gallery())
+            return preview
+
+        with patch("app.main.make_preview", side_effect=delete_during_processing):
+            response = self.upload(gallery)
+        self.assertIn(response.status_code, (404, 409))
+        self.assertEqual(self.client.get(f"/api/admin/galleries/{replacement['id']}").json()["photos"], [])
 
 
 if __name__ == "__main__":

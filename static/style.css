@@ -33,3 +33,51 @@ button:disabled { cursor: not-allowed; opacity: .5; }
 .lightbox-close,.lightbox-nav { position: absolute; color: white; background: #1c1917b3; z-index: 1; width: 3rem; height: 3rem; font-size: 2rem; }
 .lightbox-close { top: 1rem; right: 1rem; }
 .lightbox-footer { position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: .8rem; }
+
+body { background: #101210; background-image: radial-gradient(ellipse at 80% -20%, #30342a 0%, transparent 42%); min-height: 100vh; }
+.container.container { width: min(100% - 2.5rem, 1280px); margin-inline: auto; }
+.site-header { border-bottom: 1px solid #ffffff12; background: #111310d9; }
+.brand { display: inline-flex; align-items: center; gap: .75rem; color: #f3efe6; text-decoration: none; letter-spacing: .18em; }
+.brand-mark { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid #b8a78d; border-radius: 50%; color: #d7c6a9; font: 400 1rem Georgia, serif; letter-spacing: 0; }
+.brand-sub { color: #8d9187; font-size: .6rem; }
+.header-action { color: #b6b9b1; font-size: .8rem; transition: color .2s; }
+.header-action:hover { color: #fff; }
+.dashboard-hero { position: relative; padding: 1rem 0 2.5rem; border-bottom: 1px solid #ffffff14; }
+.display { color: #f2efe9; }
+.display em { color: #c8b99f; font-weight: 400; }
+.eyebrow, .section-heading { color: #a7ad9e; letter-spacing: .16em; }
+.accent-dot { display: inline-block; width: .45rem; height: .45rem; border-radius: 50%; background: #c8b99f; margin-right: .4rem; vertical-align: middle; }
+.muted { color: #a6aaa0; }
+.button { min-height: 44px; border-radius: 9px; border-color: #4a4e45; color: #e9e9e2; font-size: .8rem; }
+.button:hover:not(:disabled) { background: #343a31; }
+.button-light { color: #1b211a; background: #e1dfce; border-color: #e1dfce; }
+.button-light:hover:not(:disabled) { color: #1b211a; background: #fffdf2; }
+.button-plus { font-size: 1.3rem; line-height: 1; font-weight: 400; }
+.button-danger { color: #edb5ad; border-color: #794b47; }
+.button-danger:hover:not(:disabled) { background: #432725; color: #ffe2dd; }
+.input { border-radius: 8px; border-color: #41463d; background: #151915; padding: .85rem 1rem; }
+.input:focus { border-color: #d3c7ac; box-shadow: 0 0 0 3px #d3c7ac20; }
+.panel { background: #1a1e19; border: 1px solid #ffffff12; border-radius: 18px; padding: clamp(1.25rem, 3vw, 2rem); box-shadow: 0 18px 50px #00000014; }
+.panel-title { color: #f3efe8; font: 400 clamp(1.6rem, 3vw, 2.2rem)/1.2 "Playfair Display", Georgia, serif; }
+.empty { border-color: #4d5548; border-radius: 13px; background: #22282080; }
+.detail-empty { min-height: 320px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: .75rem; }
+.detail-empty h2 { font: 400 1.5rem "Playfair Display", Georgia, serif; color: #e7e5df; }
+.detail-empty p { max-width: 290px; line-height: 1.6; }
+.empty-symbol { display: grid; place-items: center; width: 3rem; height: 3rem; border: 1px solid #6c7464; border-radius: 50%; color: #d1c2a9; font-size: 1.3rem; }
+.gallery-item { border-color: #ffffff10; border-radius: 12px; background: #1b201a; transition: border-color .2s, background .2s, transform .2s; }
+.gallery-item:hover { background: #242a22; transform: translateY(-1px); }
+.gallery-item.active { border-color: #b4a98e; background: #293027; }
+.gallery-item-title { display: flex; justify-content: space-between; gap: .5rem; font-weight: 600; overflow-wrap: anywhere; }
+.gallery-item-title span { color: #a7ad9e; }
+.photo-grid { gap: 1.1rem; }
+.photo-frame { border-radius: 12px; background: #30362e; }
+.photo-frame img { transition: transform .3s ease; }
+.photo-frame .open-photo:hover img { transform: scale(1.035); }
+.photo-toggle { border-radius: 50%; border-color: #ffffff90; }
+.photo-toggle.selected { background: #e1dfce; border-color: #e1dfce; color: #1b211a; }
+.bottom-bar { background: #181d18ed; border-color: #ffffff1a; backdrop-filter: blur(14px); }
+.toast { border-radius: 10px; white-space: pre-line; }
+.lightbox-close, .lightbox-nav { border-radius: 50%; }
+.login-layout { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; }
+.login-card { width: min(100%, 440px); background: #1a1e19; border: 1px solid #ffffff16; padding: clamp(1.5rem, 6vw, 3rem); border-radius: 20px; box-shadow: 0 30px 80px #0004; }
+:focus-visible { outline: 2px solid #d5c6a8; outline-offset: 3px; }

@@ -30,6 +30,9 @@ def init_db():
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
             CREATE INDEX IF NOT EXISTS photos_gallery ON photos(gallery_id);
+            CREATE TABLE IF NOT EXISTS pending_preview_deletions (
+                preview_name TEXT PRIMARY KEY
+            );
         """)
 
 
