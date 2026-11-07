@@ -34,6 +34,8 @@ cp .env.example .env
 
 `.env` dosyasını düzenleyin. `ADMIN_PASSWORD` en az 12 karakter, `SECRET_KEY` en az 32 karakter olmalıdır. Her ikisi de benzersiz ve rastgele olmalıdır; örneğin `openssl rand -hex 32` ile ayrı değerler üretin. `.env` dosyasını paylaşmayın.
 
+Yalnızca geçici test için `.env` içinde `ALLOW_INSECURE_PIN=true` ayarlanırsa altı ASCII rakamdan oluşan bir `ADMIN_PASSWORD` da kabul edilir. Altı haneli PIN tahmin edilmesi kolay olduğundan üretimde kullanmayın; özellikle HTTP üzerinde parola ve oturum şifrelenmez. Güçlü parolaya dönün ve bu ayarı `false` yapın.
+
 ```bash
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
 ```
